@@ -1,57 +1,47 @@
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-function Register() {
+export default function Register() {
   const navigate = useNavigate();
 
-  const handleRegister = (e) => {
-    e.preventDefault();
+  const [name, setName] = useState("");
+  const [age, setAge] = useState("");
+
+  const register = () => {
+    if (!name || !age) {
+      alert("Please enter name and age");
+      return;
+    }
+
+    localStorage.setItem("patientName", name);
+    localStorage.setItem("patientAge", age);
 
     navigate("/consent");
   };
 
   return (
-    <div className="auth-page">
+    <div style={{ padding: 40, maxWidth: 500, margin: "auto" }}>
+      <h1>🏥 MediLens</h1>
+      <h2>Patient Registration</h2>
 
-      <div className="auth-card">
+      <input
+        placeholder="Full Name"
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+        style={{ width: "100%", padding: 14, marginBottom: 15 }}
+      />
 
-        <h1>Create Profile</h1>
+      <input
+        placeholder="Age"
+        type="number"
+        value={age}
+        onChange={(e) => setAge(e.target.value)}
+        style={{ width: "100%", padding: 14, marginBottom: 15 }}
+      />
 
-        <form onSubmit={handleRegister}>
-
-          <input
-            type="text"
-            placeholder="Full Name"
-            required
-          />
-
-          <input
-            type="date"
-            required
-          />
-
-          <select required>
-            <option value="">Select Gender</option>
-            <option>Male</option>
-            <option>Female</option>
-            <option>Other</option>
-          </select>
-
-          <input
-            type="tel"
-            placeholder="Mobile Number"
-            required
-          />
-
-          <button type="submit">
-            Create Profile
-          </button>
-
-        </form>
-
-      </div>
-
+      <button onClick={register} style={{ padding: 14, width: "100%" }}>
+        Create Patient Profile
+      </button>
     </div>
   );
 }
-
-export default Register;

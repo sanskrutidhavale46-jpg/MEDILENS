@@ -1,20 +1,44 @@
-import React from "react";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-function Login() {
+export default function Login() {
+  const navigate = useNavigate();
+  const [patientId, setPatientId] = useState("");
+
+  const login = () => {
+    if (!patientId) {
+      alert("Please enter Patient ID");
+      return;
+    }
+
+    localStorage.setItem("patientId", patientId);
+    navigate("/consent");
+  };
+
   return (
-    <div>
-      <h1>MediLens Login</h1>
+    <div style={{ padding: 40, maxWidth: 500, margin: "auto" }}>
+      <h1>🏥 MediLens</h1>
+      <h2>Patient Login</h2>
 
       <input
-        type="text"
         placeholder="Enter Patient ID"
+        value={patientId}
+        onChange={(e) => setPatientId(e.target.value)}
+        style={{ width: "100%", padding: 14, marginBottom: 15 }}
       />
 
-      <br /><br />
+      <button onClick={login} style={{ padding: 14, width: "100%" }}>
+        Login
+      </button>
 
-      <button>Continue</button>
+      <p>New patient?</p>
+
+      <button
+        onClick={() => navigate("/register")}
+        style={{ padding: 12, width: "100%" }}
+      >
+        Register
+      </button>
     </div>
   );
 }
-
-export default Login;
