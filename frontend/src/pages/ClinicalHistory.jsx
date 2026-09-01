@@ -1,6 +1,6 @@
-
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { saveClinicalHistory } from "../api";
 
 function ClinicalHistory() {
   const navigate = useNavigate();
@@ -13,8 +13,9 @@ function ClinicalHistory() {
   const [familyHistory, setFamilyHistory] = useState("");
   const [personalHistory, setPersonalHistory] = useState("");
   const [ros, setRos] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!chiefComplaint.trim()) {
       alert("Please enter the Chief Complaint.");
       return;
@@ -32,14 +33,35 @@ function ClinicalHistory() {
       createdAt: new Date().toISOString(),
     };
 
-    localStorage.setItem(
-      "clinicalHistory",
-      JSON.stringify(clinicalHistory)
-    );
+    setLoading(true);
 
-    alert("Clinical history saved successfully.");
+    try {
+      // Send data to backend
+      const response = await saveClinicalHistory(
+        clinicalHistory
+      );
 
-    navigate("/documents");
+      console.log("Clinical History Saved:", response);
+
+      // Temporary local storage for Timeline / Doctor Dashboard
+      localStorage.setItem(
+        "clinicalHistory",
+        JSON.stringify(clinicalHistory)
+      );
+
+      alert("Clinical history saved successfully.");
+
+      navigate("/documents");
+
+    } catch (error) {
+      console.error("Clinical History Error:", error);
+
+      alert(
+        "Unable to save clinical history. Please make sure the backend is running."
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -109,7 +131,6 @@ function ClinicalHistory() {
 
         {/* FORM CARD */}
         <section className="history-card">
-
 
           {/* CHIEF COMPLAINT */}
           <div className="history-field">
@@ -298,6 +319,7 @@ function ClinicalHistory() {
               onClick={() =>
                 navigate("/clinical-intake")
               }
+              disabled={loading}
             >
               ← Back
             </button>
@@ -305,8 +327,11 @@ function ClinicalHistory() {
             <button
               className="history-save"
               onClick={handleSave}
+              disabled={loading}
             >
-              Save History & Continue →
+              {loading
+                ? "Saving Clinical History..."
+                : "Save History & Continue →"}
             </button>
 
           </div>

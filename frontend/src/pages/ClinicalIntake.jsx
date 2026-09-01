@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "../index.css";
+import { saveClinicalIntake } from "../api";
 
 function ClinicalIntake() {
   const navigate = useNavigate();
@@ -11,7 +11,7 @@ function ClinicalIntake() {
   const [severity, setSeverity] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleStart = () => {
+  const handleStart = async () => {
     if (!complaint.trim() || !duration.trim()) {
       alert("Please enter your main complaint and duration.");
       return;
@@ -19,7 +19,7 @@ function ClinicalIntake() {
 
     setLoading(true);
 
-    setTimeout(() => {
+    try {
       const data = {
         language,
         complaint,
@@ -28,20 +28,36 @@ function ClinicalIntake() {
         createdAt: new Date().toISOString(),
       };
 
+      // Send data to backend
+      const response = await saveClinicalIntake(data);
+
+      console.log("Clinical Intake Saved:", response);
+
+      // Temporary local storage for frontend demo
       localStorage.setItem(
         "clinicalIntake",
         JSON.stringify(data)
       );
 
-      setLoading(false);
+      alert("Clinical Intake saved successfully!");
+
       navigate("/clinical-history");
-    }, 700);
+
+    } catch (error) {
+      console.error("Clinical Intake Error:", error);
+
+      alert(
+        "Unable to connect to server. Please make sure backend is running."
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="intake-page">
 
-      {/* Header */}
+      {/* HEADER */}
       <header className="intake-header">
 
         <div>
@@ -55,10 +71,11 @@ function ClinicalIntake() {
 
       </header>
 
-      {/* Main */}
+
+      {/* MAIN */}
       <main className="intake-container">
 
-        {/* Progress */}
+        {/* PROGRESS */}
         <div className="intake-progress">
 
           <div className="progress-top">
@@ -72,9 +89,11 @@ function ClinicalIntake() {
 
         </div>
 
-        {/* Card */}
-        <div className="intake-card">
 
+        {/* CARD */}
+        <section className="intake-card">
+
+          {/* TITLE */}
           <div className="intake-title">
 
             <div className="intake-main-icon">
@@ -83,6 +102,7 @@ function ClinicalIntake() {
 
             <div>
               <h2>Clinical Intake</h2>
+
               <p>
                 Tell us about your current health problem.
               </p>
@@ -90,7 +110,8 @@ function ClinicalIntake() {
 
           </div>
 
-          {/* Language */}
+
+          {/* LANGUAGE */}
           <div className="intake-field">
 
             <label>
@@ -99,19 +120,33 @@ function ClinicalIntake() {
 
             <select
               value={language}
-              onChange={(e) => setLanguage(e.target.value)}
+              onChange={(e) =>
+                setLanguage(e.target.value)
+              }
             >
-              <option value="English">English</option>
-              <option value="मराठी">मराठी</option>
-              <option value="हिन्दी">हिन्दी</option>
+
+              <option value="English">
+                English
+              </option>
+
+              <option value="मराठी">
+                मराठी
+              </option>
+
+              <option value="हिन्दी">
+                हिन्दी
+              </option>
+
             </select>
 
           </div>
 
-          {/* Complaint */}
+
+          {/* COMPLAINT */}
           <div className="intake-field">
 
             <div className="field-heading">
+
               <label>
                 What is your main health problem?
               </label>
@@ -119,13 +154,16 @@ function ClinicalIntake() {
               <span>
                 Required
               </span>
+
             </div>
 
             <textarea
               value={complaint}
-              onChange={(e) => setComplaint(e.target.value)}
-              placeholder="Example: I have chest pain since yesterday..."
-              rows={5}
+              onChange={(e) =>
+                setComplaint(e.target.value)
+              }
+              placeholder="Example: I have chest pain..."
+              rows="5"
             />
 
             <button
@@ -137,15 +175,17 @@ function ClinicalIntake() {
                 )
               }
             >
-              🎙️ Speak your problem
+              🎙️ Speak
             </button>
 
           </div>
 
-          {/* Duration */}
+
+          {/* DURATION */}
           <div className="intake-field">
 
             <div className="field-heading">
+
               <label>
                 How long have you had this problem?
               </label>
@@ -153,73 +193,86 @@ function ClinicalIntake() {
               <span>
                 Required
               </span>
+
             </div>
 
             <input
               type="text"
               value={duration}
-              onChange={(e) => setDuration(e.target.value)}
-              placeholder="Example: 2 days, 1 week, 3 months..."
+              onChange={(e) =>
+                setDuration(e.target.value)
+              }
+              placeholder="Example: 2 days"
             />
 
           </div>
 
-          {/* Severity */}
+
+          {/* SEVERITY */}
           <div className="intake-field">
 
             <label>
-              How severe is your problem?
+              How severe is the problem?
             </label>
 
             <div className="severity-grid">
 
               <button
                 type="button"
-                className={
+                className={`severity-button ${
                   severity === "Mild"
-                    ? "severity-button selected"
-                    : "severity-button"
+                    ? "selected"
+                    : ""
+                }`}
+                onClick={() =>
+                  setSeverity("Mild")
                 }
-                onClick={() => setSeverity("Mild")}
               >
-                <strong>😊</strong>
+                <strong>🙂</strong>
                 <span>Mild</span>
-                <small>Low discomfort</small>
+                <small>Manageable</small>
               </button>
+
 
               <button
                 type="button"
-                className={
+                className={`severity-button ${
                   severity === "Moderate"
-                    ? "severity-button selected"
-                    : "severity-button"
+                    ? "selected"
+                    : ""
+                }`}
+                onClick={() =>
+                  setSeverity("Moderate")
                 }
-                onClick={() => setSeverity("Moderate")}
               >
                 <strong>😐</strong>
                 <span>Moderate</span>
-                <small>Noticeable discomfort</small>
+                <small>Needs attention</small>
               </button>
+
 
               <button
                 type="button"
-                className={
+                className={`severity-button ${
                   severity === "Severe"
-                    ? "severity-button selected"
-                    : "severity-button"
+                    ? "selected"
+                    : ""
+                }`}
+                onClick={() =>
+                  setSeverity("Severe")
                 }
-                onClick={() => setSeverity("Severe")}
               >
                 <strong>😣</strong>
                 <span>Severe</span>
-                <small>High discomfort</small>
+                <small>Very uncomfortable</small>
               </button>
 
             </div>
 
           </div>
 
-          {/* AI Information */}
+
+          {/* AI INFO */}
           <div className="ai-info">
 
             <div className="ai-info-icon">
@@ -227,42 +280,52 @@ function ClinicalIntake() {
             </div>
 
             <div>
-              <h3>AI-Assisted Intake</h3>
+
+              <h3>
+                MediLens AI Assistance
+              </h3>
 
               <p>
-                MediLens can identify missing information and help
-                organize your answers for the doctor.
+                Your answers help organize clinical
+                information and identify important
+                follow-up questions for healthcare
+                professionals.
               </p>
+
             </div>
 
           </div>
 
-          {/* Continue */}
+
+          {/* CONTINUE */}
           <button
-            type="button"
             className="intake-continue"
             onClick={handleStart}
             disabled={loading}
           >
             {loading
-              ? "Preparing Clinical History..."
-              : "Continue to Clinical History →"}
+              ? "Saving Clinical Information..."
+              : "Save & Continue →"}
           </button>
 
-        </div>
 
-        {/* Security */}
-        <div className="intake-security">
-          🔒 Your medical information is handled securely.
-        </div>
+          {/* SECURITY */}
+          <div className="intake-security">
+            🔒 Your clinical information is private and secure.
+          </div>
 
-        {/* Disclaimer */}
+        </section>
+
+
+        {/* DISCLAIMER */}
         <p className="intake-disclaimer">
-          MediLens assists with clinical information collection.
-          It does not replace a doctor or provide autonomous diagnosis.
+          MediLens assists with clinical information
+          collection. It does not replace a doctor or
+          provide autonomous diagnosis.
         </p>
 
       </main>
+
     </div>
   );
 }
