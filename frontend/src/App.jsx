@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { useEffect } from "react";
 
 import Welcome from "./pages/Welcome";
 import Language from "./pages/Language";
@@ -13,11 +14,27 @@ import Timeline from "./pages/Timeline";
 import PatientContext from "./pages/PatientContext";
 import DoctorDashboard from "./pages/DoctorDashboard";
 
+import { testBackend } from "./api";
+
 function App() {
+
+  useEffect(() => {
+    console.log("MediLens frontend loaded");
+
+    testBackend()
+      .then((data) => {
+        console.log("BACKEND CONNECTED:", data);
+      })
+      .catch((error) => {
+        console.error("BACKEND ERROR:", error);
+      });
+  }, []);
+
   return (
     <BrowserRouter>
 
       <Routes>
+
         <Route path="/" element={<Welcome />} />
 
         <Route path="/language" element={<Language />} />
@@ -30,17 +47,36 @@ function App() {
 
         <Route path="/patient-home" element={<PatientHome />} />
 
-        <Route path="/clinical-intake" element={<ClinicalIntake />} />
+        <Route
+          path="/patient-context"
+          element={<PatientContext />}
+        />
 
-        <Route path="/clinical-history" element={<ClinicalHistory />} />
+        <Route
+          path="/clinical-intake"
+          element={<ClinicalIntake />}
+        />
 
-        <Route path="/documents" element={<Documents />} />
+        <Route
+          path="/clinical-history"
+          element={<ClinicalHistory />}
+        />
 
-        <Route path="/timeline" element={<Timeline />} />
+        <Route
+          path="/documents"
+          element={<Documents />}
+        />
 
-        <Route path="/patient-context" element={<PatientContext />} />
+        <Route
+          path="/timeline"
+          element={<Timeline />}
+        />
 
-        <Route path="/doctor-dashboard" element={<DoctorDashboard />} />
+        <Route
+          path="/doctor-dashboard"
+          element={<DoctorDashboard />}
+        />
+
       </Routes>
 
     </BrowserRouter>
