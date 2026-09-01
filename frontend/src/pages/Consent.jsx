@@ -1,36 +1,68 @@
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 function Consent() {
   const navigate = useNavigate();
 
-  const acceptConsent = () => {
-    localStorage.setItem("consent", "true");
-    navigate("/patient");
+  const [consent, setConsent] = useState(false);
+
+  const handleContinue = () => {
+    if (!consent) {
+      alert("Please provide consent to continue.");
+      return;
+    }
+
+    localStorage.setItem("medilens_consent", "true");
+
+    navigate("/patient-home");
   };
 
   return (
-    <div className="page-container">
+    <div className="consent-page">
 
       <div className="consent-card">
+
+        <div className="consent-icon">
+          🔐
+        </div>
 
         <h1>Your Privacy Matters</h1>
 
         <p>
-          MediLens collects information from your conversation
-          and medical documents to build your clinical history.
+          MediLens collects your clinical information to help
+          organize your medical history for your healthcare team.
         </p>
 
-        <p>
-          Your information will be used only according to
-          the healthcare workflow and permissions provided.
-        </p>
+        <div className="consent-box">
 
-        <label>
-          <input type="checkbox" id="consent" />
-          I understand and agree to provide consent.
+          <h3>Information we may collect</h3>
+
+          <ul>
+            <li>Clinical history</li>
+            <li>Voice responses</li>
+            <li>Medical documents</li>
+            <li>Medication and allergy information</li>
+            <li>Investigation reports</li>
+          </ul>
+
+        </div>
+
+        <label className="consent-check">
+
+          <input
+            type="checkbox"
+            checked={consent}
+            onChange={(e) => setConsent(e.target.checked)}
+          />
+
+          <span>
+            I understand and consent to the collection and
+            processing of my information for this clinical workflow.
+          </span>
+
         </label>
 
-        <button onClick={acceptConsent}>
+        <button onClick={handleContinue}>
           Give Consent & Continue
         </button>
 

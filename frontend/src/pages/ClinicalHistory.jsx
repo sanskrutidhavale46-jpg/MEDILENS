@@ -1,52 +1,331 @@
+
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+
 function ClinicalHistory() {
+  const navigate = useNavigate();
+
+  const [chiefComplaint, setChiefComplaint] = useState("");
+  const [hpi, setHpi] = useState("");
+  const [pastHistory, setPastHistory] = useState("");
+  const [medicines, setMedicines] = useState("");
+  const [allergies, setAllergies] = useState("");
+  const [familyHistory, setFamilyHistory] = useState("");
+  const [personalHistory, setPersonalHistory] = useState("");
+  const [ros, setRos] = useState("");
+
+  const handleSave = () => {
+    if (!chiefComplaint.trim()) {
+      alert("Please enter the Chief Complaint.");
+      return;
+    }
+
+    const clinicalHistory = {
+      chiefComplaint,
+      hpi,
+      pastHistory,
+      medicines,
+      allergies,
+      familyHistory,
+      personalHistory,
+      ros,
+      createdAt: new Date().toISOString(),
+    };
+
+    localStorage.setItem(
+      "clinicalHistory",
+      JSON.stringify(clinicalHistory)
+    );
+
+    alert("Clinical history saved successfully.");
+
+    navigate("/documents");
+  };
 
   return (
-    <div className="page-container">
+    <div className="history-page">
 
-      <h1>My Clinical History</h1>
+      {/* HEADER */}
+      <header className="history-header">
 
-      <section className="history-section">
+        <div className="history-brand">
 
-        <h2>Current Complaint</h2>
+          <div className="history-logo">
+            M
+          </div>
 
-        <div className="history-card">
-          Chest pain
-          <span>2 days</span>
+          <div>
+            <h1>MediLens</h1>
+            <p>AI-Powered Clinical Care</p>
+          </div>
+
         </div>
 
-      </section>
-
-      <section className="history-section">
-
-        <h2>Medical History</h2>
-
-        <div className="history-card">
-          Diabetes
-          <span>Patient reported</span>
+        <div className="history-step">
+          Step 3 of 5
         </div>
 
-      </section>
+      </header>
 
-      <section className="history-section">
 
-        <h2>Medications</h2>
+      {/* MAIN */}
+      <main className="history-container">
 
-        <div className="history-card">
-          Metformin 500 mg
-          <span>Verification pending</span>
+        {/* PROGRESS */}
+        <div className="history-progress">
+
+          <div className="history-progress-top">
+            <span>Clinical History</span>
+            <span>60% Complete</span>
+          </div>
+
+          <div className="history-progress-bar">
+            <div className="history-progress-fill"></div>
+          </div>
+
         </div>
 
-      </section>
 
-      <section className="history-section">
+        {/* TITLE */}
+        <div className="history-title">
 
-        <h2>Allergies</h2>
+          <div className="history-title-icon">
+            📋
+          </div>
 
-        <div className="history-card">
-          No verified allergy recorded
+          <div>
+            <span>STEP 3</span>
+
+            <h2>Clinical History</h2>
+
+            <p>
+              Add your medical history so your doctor can
+              understand your condition better.
+            </p>
+          </div>
+
         </div>
 
-      </section>
+
+        {/* FORM CARD */}
+        <section className="history-card">
+
+
+          {/* CHIEF COMPLAINT */}
+          <div className="history-field">
+
+            <label>
+              Chief Complaint
+              <span>* Required</span>
+            </label>
+
+            <textarea
+              value={chiefComplaint}
+              onChange={(e) =>
+                setChiefComplaint(e.target.value)
+              }
+              placeholder="What is the main reason for your visit?"
+              rows="3"
+            />
+
+          </div>
+
+
+          {/* HPI */}
+          <div className="history-field">
+
+            <label>
+              History of Present Illness (HPI)
+            </label>
+
+            <textarea
+              value={hpi}
+              onChange={(e) =>
+                setHpi(e.target.value)
+              }
+              placeholder="Describe when the problem started, how it progressed, associated symptoms, and anything that makes it better or worse."
+              rows="5"
+            />
+
+          </div>
+
+
+          {/* PAST HISTORY */}
+          <div className="history-field">
+
+            <label>
+              Past Medical History
+            </label>
+
+            <textarea
+              value={pastHistory}
+              onChange={(e) =>
+                setPastHistory(e.target.value)
+              }
+              placeholder="Previous illnesses, surgeries, hospitalizations, diabetes, hypertension, etc."
+              rows="4"
+            />
+
+          </div>
+
+
+          {/* MEDICINES */}
+          <div className="history-field">
+
+            <label>
+              Current Medicines
+            </label>
+
+            <textarea
+              value={medicines}
+              onChange={(e) =>
+                setMedicines(e.target.value)
+              }
+              placeholder="Enter medicine name, dose, and frequency if known."
+              rows="3"
+            />
+
+          </div>
+
+
+          {/* ALLERGIES */}
+          <div className="history-field">
+
+            <label>
+              Allergies
+            </label>
+
+            <textarea
+              value={allergies}
+              onChange={(e) =>
+                setAllergies(e.target.value)
+              }
+              placeholder="Medicine, food, environmental or other allergies."
+              rows="3"
+            />
+
+          </div>
+
+
+          {/* FAMILY + PERSONAL */}
+          <div className="history-two-column">
+
+            <div className="history-field">
+
+              <label>
+                Family History
+              </label>
+
+              <textarea
+                value={familyHistory}
+                onChange={(e) =>
+                  setFamilyHistory(e.target.value)
+                }
+                placeholder="Important diseases in your family."
+                rows="4"
+              />
+
+            </div>
+
+
+            <div className="history-field">
+
+              <label>
+                Personal / Social History
+              </label>
+
+              <textarea
+                value={personalHistory}
+                onChange={(e) =>
+                  setPersonalHistory(e.target.value)
+                }
+                placeholder="Smoking, alcohol, occupation, lifestyle, diet, etc."
+                rows="4"
+              />
+
+            </div>
+
+          </div>
+
+
+          {/* ROS */}
+          <div className="history-field">
+
+            <label>
+              Review of Systems (ROS)
+            </label>
+
+            <textarea
+              value={ros}
+              onChange={(e) =>
+                setRos(e.target.value)
+              }
+              placeholder="Other symptoms such as fever, cough, headache, vomiting, weakness, breathing difficulty, etc."
+              rows="4"
+            />
+
+          </div>
+
+
+          {/* AI INFO */}
+          <div className="history-ai">
+
+            <div className="history-ai-icon">
+              ✨
+            </div>
+
+            <div>
+
+              <h3>
+                AI-Assisted History
+              </h3>
+
+              <p>
+                MediLens can identify missing clinical information
+                and help organize the history for doctor review.
+              </p>
+
+            </div>
+
+          </div>
+
+
+          {/* ACTIONS */}
+          <div className="history-actions">
+
+            <button
+              className="history-back"
+              onClick={() =>
+                navigate("/clinical-intake")
+              }
+            >
+              ← Back
+            </button>
+
+            <button
+              className="history-save"
+              onClick={handleSave}
+            >
+              Save History & Continue →
+            </button>
+
+          </div>
+
+        </section>
+
+
+        {/* SECURITY */}
+        <div className="history-security">
+          🔒 Your clinical information is private and securely organized.
+        </div>
+
+
+        <p className="history-disclaimer">
+          MediLens assists with clinical information collection.
+          It does not replace a doctor or provide autonomous diagnosis.
+        </p>
+
+      </main>
 
     </div>
   );
